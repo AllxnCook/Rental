@@ -16,9 +16,6 @@ namespace Rental.Models
         [Required]
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
-        [Required]
-        [Display(Name = "Email Address")]
-        public string EmailAddress { get; set; }
 
         [Required]
         [Display(Name = "Street Address")]
@@ -26,5 +23,8 @@ namespace Rental.Models
         [Required]
         [Display(Name = "License Number")]
         public string LicenseNumber { get; set; }
+        
+        
+        
     }
 }

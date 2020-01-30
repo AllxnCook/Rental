@@ -1,0 +1,76 @@
+﻿@model IEnumerable<Rental.Models.Vehicle>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Vehicles</h1>
+
+@* Creating a table of vehicles and their information on each *@
+<table class="table">
+    <thead>
+       
+    
+        
+    
+
+    <tr>
+        
+        <th>
+            @Html.DisplayNameFor(model => model.Year)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Make)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Model)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Color)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PickupLocation)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PricePerHour)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ImageURL)
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+        @* Loop over each item in the table and print it to the page | add RENT button that sends to detail view. *@
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                <form>
+                    <button class="btn btn-info" asp-action="Details" asp-route-id="@item.Id">RENT</button>
+                </form>
+                    </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Year)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Make)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Model)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Color)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PickupLocation)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PricePerHour)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ImageURL)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

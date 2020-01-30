@@ -47,6 +47,19 @@ namespace Rental.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; }
+
+            [Required]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
+            [Required]
+            [Display(Name = "Street Address")]
+            public string StreetAddress { get; set; }
+            [Required]
+            [Display(Name = "License Number")]
+            public string LicenseNumber { get; set; }
+            [Required]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
@@ -61,6 +74,7 @@ namespace Rental.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+            
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -75,7 +89,13 @@ namespace Rental.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email };
+                var user = new ApplicationUser { 
+                    FirstName = Input.FirstName,
+                    LastName = Input.LastName,
+                    StreetAddress = Input.StreetAddress,
+                    LicenseNumber = Input.LicenseNumber,
+                    Email = Input.Email, 
+                    };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {

@@ -1,0 +1,70 @@
+﻿@model Rental.Models.ViewModels.RentAVehicleViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>VehicleRental</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            @* Creating the view for a single rental *@
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <dl class="form-group">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.vehicle.Year)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.vehicle.Year)
+                </dd>
+            </dl>
+            <dl class="form-group">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.vehicle.Make)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.vehicle.Make)
+                </dd>
+            </dl>
+            <dl class="form-group">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.vehicle.Model)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.vehicle.Model)
+                </dd>
+            </dl>
+            <dl class="form-group">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.vehicle.PricePerHour)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.vehicle.PricePerHour)
+                </dd>
+            </dl>
+            <dl class="form-group">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.vehicleRental.StartTime)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.vehicleRental.StartTime)
+                </dd>
+            </dl>
+            
+            <div class="form-group">
+                <input type="submit" value="Pay Now!" class="btn btn-info" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

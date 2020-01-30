@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Rental.Data;
 
 namespace Rental.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200128143645_SeedData")]
+    partial class SeedData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -239,7 +241,7 @@ namespace Rental.Data.Migrations
                         {
                             Id = "00000000-ffff-ffff-ffff-ffffffffffff",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "5823a78d-1b8e-42fb-a5c2-348bab10552d",
+                            ConcurrencyStamp = "c4cad7b1-8235-49f0-8264-224f03fa0018",
                             Email = "admin@admin.com",
                             EmailConfirmed = true,
                             FirstName = "admin",
@@ -248,9 +250,9 @@ namespace Rental.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@ADMIN.COM",
                             NormalizedUserName = "ADMIN@ADMIN.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEJN1PDOx00DKgCSeKX1OKBSRJqUHYCNfgHQk61Xhjd23yi1Pt89PWWJ4oTt1RiUBZg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEAOCVBbiZCVr2yTdA6REtoZTcjXtBjwDueBWxNJuCLDzIcv5sf6xH3Kmp1Pxr/EWSg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "3f1a0c2d-5f71-4986-811a-594b6f53e9fd",
+                            SecurityStamp = "6d177989-8001-49b4-bb14-cb5df9b770a2",
                             StreetAddress = "123 Infinity Way",
                             TwoFactorEnabled = false,
                             UserName = "admin@admin.com"
@@ -271,14 +273,66 @@ namespace Rental.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("PaymentType");
+                });
+
+            modelBuilder.Entity("Rental.Models.Rental", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("PaymentTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentTypeId");
+
+                    b.ToTable("Rentals");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ApplicationUserId = "00000000-ffff-ffff-ffff-ffffffffffff",
+                            EndTime = new DateTime(2020, 1, 22, 19, 0, 0, 0, DateTimeKind.Unspecified),
+                            StartTime = new DateTime(2020, 1, 22, 16, 13, 37, 0, DateTimeKind.Unspecified),
+                            VehicleId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ApplicationUserId = "00000000-ffff-ffff-ffff-ffffffffffff",
+                            EndTime = new DateTime(2020, 1, 23, 18, 13, 12, 0, DateTimeKind.Unspecified),
+                            StartTime = new DateTime(2020, 1, 23, 12, 16, 33, 0, DateTimeKind.Unspecified),
+                            VehicleId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ApplicationUserId = "00000000-ffff-ffff-ffff-ffffffffffff",
+                            EndTime = new DateTime(2020, 1, 24, 20, 10, 17, 0, DateTimeKind.Unspecified),
+                            StartTime = new DateTime(2020, 1, 24, 13, 12, 11, 0, DateTimeKind.Unspecified),
+                            VehicleId = 3
+                        });
                 });
 
             modelBuilder.Entity("Rental.Models.Vehicle", b =>
@@ -448,61 +502,6 @@ namespace Rental.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Rental.Models.VehicleRental", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("PaymentTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PaymentTypeId");
-
-                    b.ToTable("VehicleRentals");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ApplicationUserId = "00000000-ffff-ffff-ffff-ffffffffffff",
-                            EndTime = new DateTime(2020, 1, 22, 19, 0, 0, 0, DateTimeKind.Unspecified),
-                            StartTime = new DateTime(2020, 1, 22, 16, 13, 37, 0, DateTimeKind.Unspecified),
-                            VehicleId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ApplicationUserId = "00000000-ffff-ffff-ffff-ffffffffffff",
-                            EndTime = new DateTime(2020, 1, 23, 18, 13, 12, 0, DateTimeKind.Unspecified),
-                            StartTime = new DateTime(2020, 1, 23, 12, 16, 33, 0, DateTimeKind.Unspecified),
-                            VehicleId = 2
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ApplicationUserId = "00000000-ffff-ffff-ffff-ffffffffffff",
-                            EndTime = new DateTime(2020, 1, 24, 20, 10, 17, 0, DateTimeKind.Unspecified),
-                            StartTime = new DateTime(2020, 1, 24, 13, 12, 11, 0, DateTimeKind.Unspecified),
-                            VehicleId = 3
-                        });
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -554,16 +553,7 @@ namespace Rental.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Rental.Models.PaymentType", b =>
-                {
-                    b.HasOne("Rental.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Rental.Models.VehicleRental", b =>
+            modelBuilder.Entity("Rental.Models.Rental", b =>
                 {
                     b.HasOne("Rental.Models.PaymentType", "PaymentType")
                         .WithMany()
