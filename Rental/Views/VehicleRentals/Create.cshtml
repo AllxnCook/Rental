@@ -10,9 +10,14 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-controller="VehicleRentals" asp-action="Edit" asp-route-id="@Model.vehicleRental.Id">
             @* Creating the view for a single rental *@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @* hidden inputs to get things back from the previous view *@
+            <input type="hidden" asp-for="vehicleRental.Id" />
+            <input type="hidden" asp-for="vehicleRental.ApplicationUserId" />
+            <input type="hidden" asp-for="vehicleRental.StartTime" />
+            <input type="hidden" asp-for="vehicleRental.VehicleId" />
             <dl class="form-group">
                 <dt class="col-sm-2">
                     @Html.DisplayNameFor(model => model.vehicle.Year)
@@ -53,9 +58,17 @@
                     @Html.DisplayFor(model => model.vehicleRental.StartTime)
                 </dd>
             </dl>
-            
+
+
             <div class="form-group">
-                <input type="submit" value="Pay Now!" class="btn btn-info" />
+
+
+                <label class="control-label">Payment Method</label>
+                <select asp-for="@Model.vehicleRental.PaymentTypeId" class="form-control" asp-items="@Model.ListOfPaymentTypes"></select>
+                <span asp-validation-for="@Model.ListOfPaymentTypes" class="text-danger"></span>
+                <a asp-controller="PaymentTypes" asp-action="Create">Add a Payment Method</a> <br />
+                <button type="submit" class="btn btn-info">Pay Now!</button>
+
             </div>
         </form>
     </div>

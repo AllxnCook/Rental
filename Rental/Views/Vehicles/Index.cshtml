@@ -34,9 +34,7 @@
         <th>
             @Html.DisplayNameFor(model => model.PricePerHour)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ImageURL)
-        </th>
+        
     </tr>
     </thead>
     <tbody>
@@ -68,7 +66,7 @@
                     @Html.DisplayFor(modelItem => item.PricePerHour)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ImageURL)
+                    <img class="col-sm-10" src=@item.ImageURL />
                 </td>
             </tr>
         }

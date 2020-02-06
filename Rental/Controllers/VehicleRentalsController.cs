@@ -33,51 +33,55 @@ namespace Rental.Controllers
         // GET: VehicleRentals/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            RentAVehicleViewModel vm = new RentAVehicleViewModel();
+            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
             if (id == null)
             {
                 return NotFound();
             }
 
-            var vehicleRental = await _context.VehicleRentals
+            vm.vehicleRental = await _context.VehicleRentals
                 .Include(v => v.PaymentType)
+                .Include(v => v.vehicle)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (vehicleRental == null)
+           
+            if (vm == null)
             {
                 return NotFound();
             }
-
-            return View(vehicleRental);
+            // calculating the pricing for each rental by the hour
+            var hours = vm.vehicleRental.EndTime - vm.vehicleRental.StartTime;
+            double hrs = hours.TotalHours;
+            var pricing = vm.vehicleRental.vehicle.PricePerHour;
+            vm.totalCost = hrs * pricing;
+            
+            return View(vm);
         }
 
         // GET: VehicleRentals/Create
-        public async Task<IActionResult> Create(int? id)
-        {
+        public async Task<IActionResult> Create(int id)
+        {            
             //creating new SelectList item to run in the paymentTypes dropdown
-            //ViewData["PaymentTypeId"] = new SelectList(_context.Set<PaymentType>(), "Id", "Id");
-        RentAVehicleViewModel vm = new RentAVehicleViewModel();
+    
+            RentAVehicleViewModel vm = new RentAVehicleViewModel();
+            // getting vehicle and start date by user
+            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+            
             //attaching list of payment types to the view model
             vm.ListOfPaymentTypes = _context.PaymentType.Select(p => new SelectListItem
             {
                 Value = p.Id.ToString(),
                 Text = p.Name
             }).ToList();
-            vm.ListOfPaymentTypes.Insert(0, new SelectListItem()
-            {
-                Value = "0",
-                Text = "Please Choose a Payment Method!"
-            });
             // attaching all vehicle information to the view model
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var vehicle = await _context.Vehicles
+            vm.vehicle = await _context.Vehicles
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (vehicle == null)
-            {
-                return NotFound();
-            }
+            vm.vehicleRental = new VehicleRental();
+            vm.vehicleRental.ApplicationUserId = currentUser.Id;
+            vm.vehicleRental.StartTime = DateTime.Now;
+            vm.vehicleRental.VehicleId = id;
+            _context.Add(vm.vehicleRental);
+            await _context.SaveChangesAsync();
 
             return View(vm);
         }
@@ -97,25 +101,33 @@ namespace Rental.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            //ViewData["PaymentTypeId"] = new SelectList(_context.Set<PaymentType>(), "Id", "Id", vm.PaymentTypeId);
+            
             return View(vm);
         }
 
         // GET: VehicleRentals/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            //creating an instance of the viewmodel and verifying user
+            RentAVehicleViewModel vm = new RentAVehicleViewModel();
+            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
             var vehicleRental = await _context.VehicleRentals.FindAsync(id);
-            if (vehicleRental == null)
-            {
-                return NotFound();
-            }
-            ViewData["PaymentTypeId"] = new SelectList(_context.Set<PaymentType>(), "Id", "Id", vehicleRental.PaymentTypeId);
-            return View(vehicleRental);
+            // getting vehicle by view model information
+            vm.vehicle = await _context.Vehicles
+                .FirstOrDefaultAsync(m => m.Id == id);
+            vm.vehicleRental = new VehicleRental();
+            vm.vehicleRental.StartTime = vehicleRental.StartTime;
+            
+            vm.vehicleRental.PaymentType = vehicleRental.PaymentType;
+            vm.vehicleRental.ApplicationUserId = currentUser.Id.ToString();
+            vm.vehicleRental.VehicleId = id;
+            _context.Add(vm.vehicleRental);
+            await _context.SaveChangesAsync();
+
+            return View(vm);
+
+
+            
         }
 
         // POST: VehicleRentals/Edit/5
@@ -123,39 +135,22 @@ namespace Rental.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,StartTime,EndTime,PaymentTypeId,ApplicationUserId,VehicleId")] VehicleRental vehicleRental)
+        public async Task<IActionResult> Edit(RentAVehicleViewModel vm)
         {
-            if (id != vehicleRental.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+          if (ModelState.IsValid)
                 {
-                    _context.Update(vehicleRental);
+                    var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                    vm.vehicleRental.ApplicationUserId = currentUser.Id;
+                vm.vehicleRental.EndTime = DateTime.Now;
+                _context.Update(vm.vehicleRental);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!VehicleRentalExists(vehicleRental.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["PaymentTypeId"] = new SelectList(_context.Set<PaymentType>(), "Id", "Id", vehicleRental.PaymentTypeId);
-            return View(vehicleRental);
-        }
 
-        // GET: VehicleRentals/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+                return RedirectToAction("Details", new { id = vm.vehicleRental.Id});
+            }
+
+            // GET: VehicleRentals/Delete/5
+            public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {

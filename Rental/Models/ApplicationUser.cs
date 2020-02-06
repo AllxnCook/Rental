@@ -23,7 +23,9 @@ namespace Rental.Models
         [Required]
         [Display(Name = "License Number")]
         public string LicenseNumber { get; set; }
-        
+
+        public List<VehicleRental> vehicleRentals { get; set; } = new List<VehicleRental>();
+
         
         
     }

@@ -48,13 +48,13 @@
             @Html.DisplayFor(model => model.Color)
         </dd>
 
-        <img class="col-sm-10" src=@Model.ImageURL />
+        <img class="col-sm-10 img-fluid float-left" src=@Model.ImageURL />
 
 
     </dl>
 </div>
 <div>
-    <a asp-controller="VehicleRentals" asp-action="Create"><button class="btn btn-info">Submit</button> </a>
+    <a asp-controller="VehicleRentals" asp-action="Create" asp-route-id="@Model.Id"><button class="btn btn-info">Submit</button></a>
     <a asp-action="Index">Back to List</a>
 </div>
 
