@@ -7,7 +7,8 @@
 <h1>My Rentals</h1>
 
 <p>
-    <a asp-action="Create">New Rental</a>
+    <a asp-controller="Vehicles" asp-action="Index">New Rental</a>
+
 </p>
 <table class="table">
     <thead>
@@ -37,13 +38,13 @@
                 @Html.DisplayFor(modelItem => item.EndTime)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PaymentType)
+                @Html.DisplayFor(modelItem => item.PaymentType.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.vehicle.Make)
             </td>
             <td>
-               <a asp-action="Details">Details</a>
+               <a asp-action="Details" asp-controller="VehicleRentals"asp-route-id="@item.Id">Details</a>
             </td>
         </tr>
 }

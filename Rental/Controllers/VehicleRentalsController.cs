@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -24,13 +25,20 @@ namespace Rental.Controllers
         }
 
         // GET: VehicleRentals
+        [Authorize]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.VehicleRentals.Include(v => v.PaymentType);
+            ApplicationUser currentUser = await _userManager.GetUserAsync(HttpContext.User);
+
+            var applicationDbContext = _context.VehicleRentals
+                .Where(v => v.ApplicationUser == currentUser)
+                .Include(v => v.PaymentType)
+                .Include(v => v.vehicle);
             return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: VehicleRentals/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             RentAVehicleViewModel vm = new RentAVehicleViewModel();
@@ -44,7 +52,7 @@ namespace Rental.Controllers
                 .Include(v => v.PaymentType)
                 .Include(v => v.vehicle)
                 .FirstOrDefaultAsync(m => m.Id == id);
-           
+
             if (vm == null)
             {
                 return NotFound();
@@ -54,21 +62,22 @@ namespace Rental.Controllers
             double hrs = hours.TotalHours;
             var pricing = vm.vehicleRental.vehicle.PricePerHour;
             vm.totalCost = hrs * pricing;
-            
+
             return View(vm);
         }
 
         // GET: VehicleRentals/Create
+        [Authorize]
         public async Task<IActionResult> Create(int id)
-        {            
+        {
             //creating new SelectList item to run in the paymentTypes dropdown
-    
+
             RentAVehicleViewModel vm = new RentAVehicleViewModel();
             // getting vehicle and start date by user
             var currentUser = await _userManager.GetUserAsync(HttpContext.User);
-            
+
             //attaching list of payment types to the view model
-            vm.ListOfPaymentTypes = _context.PaymentType.Select(p => new SelectListItem
+            vm.ListOfPaymentTypes = _context.PaymentType.Where(m => m.User == currentUser).Select(p => new SelectListItem
             {
                 Value = p.Id.ToString(),
                 Text = p.Name
@@ -91,6 +100,7 @@ namespace Rental.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create(RentAVehicleViewModel vm)
         {
             if (ModelState.IsValid)
@@ -101,11 +111,12 @@ namespace Rental.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            
+
             return View(vm);
         }
 
         // GET: VehicleRentals/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
             //creating an instance of the viewmodel and verifying user
@@ -117,7 +128,7 @@ namespace Rental.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             vm.vehicleRental = new VehicleRental();
             vm.vehicleRental.StartTime = vehicleRental.StartTime;
-            
+
             vm.vehicleRental.PaymentType = vehicleRental.PaymentType;
             vm.vehicleRental.ApplicationUserId = currentUser.Id.ToString();
             vm.vehicleRental.VehicleId = id;
@@ -127,7 +138,7 @@ namespace Rental.Controllers
             return View(vm);
 
 
-            
+
         }
 
         // POST: VehicleRentals/Edit/5
@@ -135,6 +146,8 @@ namespace Rental.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
+
         public async Task<IActionResult> Edit(RentAVehicleViewModel vm)
         {
           if (ModelState.IsValid)
@@ -149,8 +162,9 @@ namespace Rental.Controllers
                 return RedirectToAction("Details", new { id = vm.vehicleRental.Id});
             }
 
-            // GET: VehicleRentals/Delete/5
-            public async Task<IActionResult> Delete(int? id)
+        // GET: VehicleRentals/Delete/5
+        [Authorize]
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
@@ -171,6 +185,7 @@ namespace Rental.Controllers
         // POST: VehicleRentals/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var vehicleRental = await _context.VehicleRentals.FindAsync(id);

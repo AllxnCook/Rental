@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -24,6 +25,7 @@ namespace Rental.Controllers
         }
 
         // GET: PaymentTypes
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var currentUser = await _userManager.GetUserAsync(HttpContext.User);
@@ -33,6 +35,7 @@ namespace Rental.Controllers
         }
 
         // GET: PaymentTypes/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -52,6 +55,7 @@ namespace Rental.Controllers
         }
 
         // GET: PaymentTypes/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -62,6 +66,7 @@ namespace Rental.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("Id,Name,AccountNumber,UserId")] PaymentType paymentType)
         {
             //removing user and userId from Modelstate
@@ -80,6 +85,7 @@ namespace Rental.Controllers
         }
 
         // GET: PaymentTypes/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -98,8 +104,10 @@ namespace Rental.Controllers
 
         // POST: PaymentTypes/Edit/5
         
+
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,AccountNumber,UserId")] PaymentType paymentType)
         {
             //checking to see if the payment type has an Id
@@ -136,6 +144,7 @@ namespace Rental.Controllers
         }
 
         // GET: PaymentTypes/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -157,6 +166,7 @@ namespace Rental.Controllers
         // POST: PaymentTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var paymentType = await _context.PaymentType.FindAsync(id);

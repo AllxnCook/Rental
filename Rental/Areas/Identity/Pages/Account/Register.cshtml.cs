@@ -94,6 +94,7 @@ namespace Rental.Areas.Identity.Pages.Account
                     LastName = Input.LastName,
                     StreetAddress = Input.StreetAddress,
                     LicenseNumber = Input.LicenseNumber,
+                    UserName = Input.Email,
                     Email = Input.Email, 
                     };
                 var result = await _userManager.CreateAsync(user, Input.Password);
